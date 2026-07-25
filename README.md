@@ -9,9 +9,9 @@
 
 ## 설치
 
-공개 배포 파일은 GitHub Releases에서 제공할 예정입니다. 현재 저장소에는 배포용 EXE와 ZIP을 포함하지 않습니다.
+대부분의 사용자는 [HankiSetup-0.1.0.exe](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.1.0/HankiSetup-0.1.0.exe)를 내려받아 설치하면 됩니다.
 
-설치 파일을 직접 빌드한 경우 `dist/HankiSetup-0.1.0.exe`를 실행합니다. 사용자 계정 범위에 설치되므로 관리자 권한은 필요하지 않습니다.
+사용자 계정 범위에 설치되므로 관리자 권한은 필요하지 않습니다.
 바탕 화면 바로가기는 설치 중 선택할 수 있습니다.
 설치·동일 버전 덮어쓰기·제거·재설치와 LocalAppData DB 보존을 Windows에서 실제 검증했습니다.
 
@@ -20,12 +20,17 @@ Windows용 코드 서명 인증서가 아직 없으므로 Microsoft Defender Sma
 
 ## Portable 버전
 
-1. `Hanki-0.1.0-win-x64.zip`을 원하는 폴더에 압축 해제합니다.
+설치하지 않고 사용하려면 [Hanki-0.1.0-win-x64.zip](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.1.0/Hanki-0.1.0-win-x64.zip)을 사용하세요.
+
+1. ZIP을 원하는 폴더에 압축 해제합니다.
 2. `Hanki.exe`를 실행합니다.
 3. 첫 실행 안내를 확인합니다.
 
 .NET 8 런타임을 포함한 x64 self-contained 배포본이므로 별도 .NET 설치가 필요하지 않습니다.
 실행 파일 위치를 옮긴 뒤 Windows 자동 실행을 사용하는 경우 설정에서 자동 실행을 껐다가 다시 켜 경로를 갱신하세요.
+
+- [최신 Release 페이지](https://github.com/huiyulidev-gif/HankiWindows/releases/latest)
+- [SHA-256 체크섬](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.1.0/SHA256SUMS.txt)
 
 ## 단축어 사용
 
