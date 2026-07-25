@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>한키 로컬 입력 테스트</title>
+  <style>
+    :root { color-scheme: light; font-family: "Segoe UI", sans-serif; }
+    body { max-width: 760px; margin: 40px auto; padding: 0 24px; color: #241e36; }
+    h1 { color: #5c3fc4; }
+    .notice { padding: 12px 16px; background: #f1edfa; border-radius: 10px; }
+    label { display: block; margin-top: 22px; font-weight: 700; }
+    input, textarea, [contenteditable] {
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      min-height: 44px;
+      margin-top: 7px;
+      padding: 10px 12px;
+      border: 1px solid #bdb4d4;
+      border-radius: 8px;
+      font: inherit;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    [contenteditable] { min-height: 70px; font-weight: 400; }
+  </style>
+</head>
+<body>
+  <h1>한키 로컬 입력 테스트</h1>
+  <p class="notice">외부 통신이나 폼 전송이 없는 로컬 전용 페이지입니다.</p>
+
+  <label for="plain-input">일반 text input</label>
+  <input id="plain-input" type="text" autocomplete="off" spellcheck="false">
+
+  <label for="plain-textarea">textarea</label>
+  <textarea id="plain-textarea" spellcheck="false"></textarea>
+
+  <label for="password-input">password input — 변환되면 안 됨</label>
+  <input id="password-input" type="password" autocomplete="off" spellcheck="false">
+
+  <label for="editable">contenteditable</label>
+  <div id="editable" contenteditable="true" role="textbox" aria-multiline="true" spellcheck="false"></div>
+</body>
+</html>

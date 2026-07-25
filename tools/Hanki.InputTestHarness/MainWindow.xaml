@@ -1,0 +1,38 @@
+<Window x:Class="Hanki.InputTestHarness.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="한키 입력 보호 테스트"
+        Width="620"
+        Height="430"
+        WindowStartupLocation="CenterScreen">
+    <StackPanel Margin="28">
+        <TextBlock Text="한키 로컬 입력 보호 테스트"
+                   FontSize="24"
+                   FontWeight="Bold"/>
+        <TextBlock Margin="0,6,0,22"
+                   Text="실제 비밀번호나 사용자 데이터가 없는 테스트 전용 창입니다."/>
+
+        <TextBlock Text="일반 TextBox — 변환되어야 함" FontWeight="SemiBold"/>
+        <TextBox x:Name="PlainTextBox"
+                 AutomationProperties.Name="일반 테스트 입력"
+                 Height="42"
+                 Margin="0,7,0,20"
+                 Padding="9"/>
+
+        <TextBlock Text="PasswordBox — 변환되면 안 됨" FontWeight="SemiBold"/>
+        <PasswordBox x:Name="ProtectedPasswordBox"
+                     AutomationProperties.Name="보호 테스트 입력"
+                     Height="42"
+                     Margin="0,7,0,20"
+                     Padding="9"/>
+
+        <TextBlock Text="여러 줄 TextBox — 변환되어야 함" FontWeight="SemiBold"/>
+        <TextBox x:Name="MultilineTextBox"
+                 AutomationProperties.Name="여러 줄 테스트 입력"
+                 Height="90"
+                 Margin="0,7,0,0"
+                 Padding="9"
+                 AcceptsReturn="True"
+                 TextWrapping="Wrap"/>
+    </StackPanel>
+</Window>
