@@ -207,6 +207,6 @@
 - 공개 자산 임시 재다운로드, ZIP 압축 해제, 제품 버전·해시·Authenticode 확인: **PASS**. 실제 해시는 `docs/POST_RELEASE_VERIFICATION_0.2.0.md`에 기록했습니다.
 - yulbyte-site에 `published=true`, 실제 GitHub Release URL·SHA-256·설치형/Portable 버튼 반영. 사이트 commit `5d8668c`를 `main`에 push: **PASS**.
 - yulbyte-site lint/typecheck/test 22/22/build/internal link check: **PASS**.
-- `www.yulbyte.com`, `/hanki`, `/updates`, `/guide` HTTP 200: **PASS**. 다만 공개 HTML은 이전 Vercel 0.1.0 배포를 반환했습니다.
-- Vercel 대시보드는 로그인 필요 상태여서 production 배포를 강행하지 않음: **사용자 설정 필요**. 새 배포 후 `/hanki` 링크/해시를 재검증해야 합니다.
+- `www.yulbyte.com`, `/hanki`, `/updates`, `/guide` HTTP 200: **PASS**. `/hanki`에서 0.2.0·설치형·Portable·GitHub Release 링크를 확인했습니다.
+- Vercel production 자동 배포 반영과 운영 링크/해시 확인: **PASS**. 사이트 링크와 GitHub 자산 모두 HTTP 200입니다.
 - Supabase migration, 추가 사용자 데이터 삭제, code signing은 실행하지 않음. Hanki 설치본은 최종 프로세스 0개·43289 미청취 상태로 정리했습니다.

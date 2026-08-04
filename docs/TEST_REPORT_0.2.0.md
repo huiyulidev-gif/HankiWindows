@@ -16,7 +16,7 @@
 | Authenticode | 사용자 승인 필요 | `NotSigned` |
 | GitHub Release/자산 재다운로드 | PASS | v0.2.0 공개, 설치본·Portable·SHA256SUMS 재다운로드 해시 일치 |
 | Yulbyte source 공개 metadata | PASS | `published=true`, 실제 GitHub URL·SHA-256, yulbyte-site `5d8668c` |
-| Vercel production 공개 반영 | 사용자 설정 필요 | 도메인 HTTP 200이나 이전 0.1.0 HTML; Vercel 로그인/배포 설정 필요 |
+| Vercel production 공개 반영 | PASS | `www.yulbyte.com/hanki`에서 0.2.0·실제 다운로드 링크 확인, HTTP 200 |
 
 ## 정식 산출물
 
@@ -40,4 +40,4 @@
 
 ## 공개 작업 상태
 
-GitHub Release와 HankiWindows/yulbyte-site의 일반 commit·push·tag는 완료했습니다. Vercel production은 프로젝트 로그인/배포 설정이 없어 공개 HTML 갱신을 확인하지 못했으며, Supabase migration은 실행하지 않았습니다.
+GitHub Release와 HankiWindows/yulbyte-site의 일반 commit·push·tag, Vercel production 반영은 완료했습니다. Supabase migration은 실행하지 않았습니다.

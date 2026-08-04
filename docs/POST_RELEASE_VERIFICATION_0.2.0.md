@@ -7,10 +7,10 @@
 - GitHub Release: PASS — [v0.2.0](https://github.com/huiyulidev-gif/HankiWindows/releases/tag/v0.2.0)
 - 공개 자산 재다운로드: PASS — 설치본·Portable·SHA256 manifest 해시 일치
 - Yulbyte `published=true`: PASS — `yulbyte-site` main `5d8668c`에 실제 URL·해시 반영
-- Vercel production: 사용자 설정 필요 — 운영 도메인은 200이지만 현재 공개 HTML은 이전 0.1.0 배포를 제공하고 Vercel 대시보드는 로그인 필요
-- 운영 URL 다운로드 해시 확인: 사용자 설정 필요 — 새 Vercel 배포 후 `/hanki` 링크에서 재확인 필요
+- Vercel production: PASS — `https://www.yulbyte.com` 운영 배포에서 0.2.0 공개 페이지 확인
+- 운영 URL 다운로드 링크 확인: PASS — `/hanki` 설치형·Portable·GitHub Release 링크 HTTP 200
 
-GitHub 공개 단계는 로컬 최종 산출물 검증, HankiWindows push, 태그 push, GitHub 자산 재다운로드 검증까지 PASS로 완료했습니다. 운영 사이트는 Vercel 프로젝트 인증/배포 설정이 필요합니다.
+GitHub 공개 단계와 Vercel 운영 반영은 로컬 최종 산출물 검증, HankiWindows push, 태그 push, GitHub 자산 재다운로드 검증, 운영 URL 확인까지 PASS로 완료했습니다.
 
 ## 공개 자산 검증
 
@@ -24,4 +24,5 @@ GitHub 공개 단계는 로컬 최종 산출물 검증, HankiWindows push, 태�
 - `yulbyte-site` 커밋 `5d8668c`를 `main`에 일반 push 완료.
 - 소스의 `/hanki`는 버전 `0.2.0`, 설치형·Portable·GitHub Release 링크와 SHA-256을 표시하도록 갱신됨.
 - 로컬 `lint`, `typecheck`, `npm test` 22/22, `build`, 내부 link check 모두 PASS.
-- `https://www.yulbyte.com`, `/hanki`, `/updates`, `/guide`는 HTTP 200 응답. 다만 `/hanki` 공개 HTML은 아직 이전 Vercel 배포(0.1.0 링크)를 반환함.
+- `https://www.yulbyte.com`, `/hanki`, `/updates`, `/guide`는 HTTP 200 응답. `/hanki` HTML에서 0.2.0, 설치형·Portable·GitHub Release 버튼과 실제 v0.2.0 URL을 확인함.
+- GitHub Release 설치형·Portable URL은 각각 HTTP 200이며 SHA-256은 재다운로드 검증값과 일치함.

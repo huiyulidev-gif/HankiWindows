@@ -16,4 +16,4 @@
 | GitHub Release | PASS |
 | 자산 재다운로드 검증 | PASS |
 | Yulbyte published=true | PASS |
-| Vercel production | 사용자 설정 필요 |
+| Vercel production | PASS |

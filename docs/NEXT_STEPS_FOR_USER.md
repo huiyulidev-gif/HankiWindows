@@ -84,14 +84,13 @@
 - HankiWindows commit `f9e15f9`, annotated tag `v0.2.0`, GitHub Release 및 공개 자산 업로드: **PASS**
 - 설치본·Portable·SHA256SUMS 재다운로드와 해시/압축 해제 검증: **PASS**
 - yulbyte-site `published=true`와 실제 다운로드 URL·SHA-256 반영, commit `5d8668c` push: **PASS**
-- `www.yulbyte.com` 운영 응답: **PASS** (HTTP 200). 현재 HTML은 이전 0.1.0 배포라 새 Vercel production 반영은 **사용자 설정 필요**.
-- Vercel 대시보드는 로그인 화면으로 확인되어 자동 배포를 강행하지 않았습니다. 로그인 후 production 배포 또는 Git integration을 연결하세요.
+- `www.yulbyte.com` 운영 응답 및 Vercel production 반영: **PASS** (HTTP 200). `/hanki`에서 0.2.0 공개 링크를 확인했습니다.
 - 공개 후에도 Authenticode/SmartScreen 정책은 **사용자 승인 필요**이며 Supabase migration은 실행하지 않았습니다.
 
 ## 공개 후 사용자 확인
 
-- [ ] Vercel production 배포 후 `https://www.yulbyte.com/hanki`에 0.2.0·설치형·Portable 링크가 표시되는지 확인
-- [ ] 사이트 링크에서 내려받은 파일의 SHA-256이 GitHub Release와 일치하는지 확인
+- [x] Vercel production 배포 후 `https://www.yulbyte.com/hanki`에 0.2.0·설치형·Portable 링크가 표시되는지 확인
+- [x] 사이트 링크와 GitHub Release 자산이 HTTP 200인지 확인하고 SHA-256을 대조
 - [ ] SmartScreen의 알 수 없는 게시자 안내와 코드 서명 정책 결정
 - [ ] 첫 공개 설치 전 사용자 DB 백업 보관
 
