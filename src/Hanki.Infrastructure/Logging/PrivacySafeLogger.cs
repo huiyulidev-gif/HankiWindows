@@ -1,6 +1,6 @@
 namespace Hanki.Infrastructure.Logging;
 
-public sealed class PrivacySafeLogger
+public sealed class PrivacySafeLogger : IPrivacySafeLogger
 {
     private readonly object _sync = new();
 

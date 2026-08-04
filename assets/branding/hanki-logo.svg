@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="hankiBgGrad" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#3977F6"/>
+      <stop offset="52%" stop-color="#1FA7DE"/>
+      <stop offset="100%" stop-color="#14D2CC"/>
+    </linearGradient>
+    <linearGradient id="hankiHGrad" x1="300" y1="290" x2="720" y2="734" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#EAFEFF"/>
+      <stop offset="55%" stop-color="#DDFEFF"/>
+      <stop offset="100%" stop-color="#8FD9FF"/>
+    </linearGradient>
+    <linearGradient id="hankiArrowGrad" x1="540" y1="500" x2="790" y2="230" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#69B8FF"/>
+      <stop offset="100%" stop-color="#EAFEFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- App icon canvas: rounded square, transparent outside -->
+  <rect x="32" y="32" width="960" height="960" rx="212" ry="212" fill="url(#hankiBgGrad)"/>
+
+  <!-- Soft depth shadow of the H, flat solid shape (no blur filter) -->
+  <g fill="#0B2E7A" opacity="0.24">
+    <rect x="312" y="304" width="150" height="444" rx="34" ry="34"/>
+    <rect x="582" y="304" width="150" height="444" rx="34" ry="34"/>
+    <rect x="462" y="461" width="120" height="130"/>
+  </g>
+
+  <!-- H mark: left leg, right leg, connecting crossbar -->
+  <g fill="url(#hankiHGrad)">
+    <rect x="300" y="290" width="150" height="444" rx="34" ry="34"/>
+    <rect x="570" y="290" width="150" height="444" rx="34" ry="34"/>
+    <rect x="450" y="447" width="120" height="130"/>
+  </g>
+
+  <!-- Depth shadow for the arrow -->
+  <g opacity="0.22">
+    <line x1="565" y1="486" x2="696" y2="349" stroke="#0B2E7A" stroke-width="46" stroke-linecap="round"/>
+    <path d="M756 292 L739 374 L674 309 Z" fill="#0B2E7A"/>
+  </g>
+
+  <!-- Upward-right growth arrow -->
+  <line x1="555" y1="480" x2="686" y2="343" stroke="url(#hankiArrowGrad)" stroke-width="46" stroke-linecap="round"/>
+  <path d="M750 286 L733 368 L668 303 Z" fill="url(#hankiArrowGrad)"/>
+
+  <!-- Sparkle -->
+  <path d="M860 165 L872.4 204.6 L912 217 L872.4 229.4 L860 269 L847.6 229.4 L808 217 L847.6 204.6 Z" fill="#F4FEFF"/>
+  <path d="M918 258 L924.8 276.4 L943.2 283 L924.8 289.6 L918 308 L911.2 289.6 L892.8 283 L911.2 276.4 Z" fill="#F4FEFF" opacity="0.9"/>
+</svg>

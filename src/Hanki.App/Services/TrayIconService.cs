@@ -8,7 +8,9 @@ public sealed class TrayIconService : IDisposable
     private readonly NotifyIcon _notifyIcon;
     private readonly ToolStripMenuItem _enableItem;
     private readonly ToolStripMenuItem _disableItem;
+    private readonly Icon? _ownedIcon;
     private bool _balloonShown;
+    private long _lastIconOpenAt;
 
     public TrayIconService()
     {
@@ -27,14 +29,37 @@ public sealed class TrayIconService : IDisposable
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("완전히 종료", null, (_, _) => ExitRequested?.Invoke(this, EventArgs.Empty));
 
+        // Icon(string) reads the whole .ico into memory and closes the file immediately --
+        // it does not keep Assets\hanki-logo.ico locked while the tray icon is shown.
+        // Falls back to the system icon if the branding asset is missing from the build output
+        // (e.g. a stale/manual build), never crashes the app over a missing icon file.
+        var iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "hanki-logo.ico");
+        try
+        {
+            _ownedIcon = File.Exists(iconPath) ? new Icon(iconPath) : null;
+        }
+        catch (Exception exception) when (exception is IOException or ArgumentException)
+        {
+            _ownedIcon = null;
+        }
+
         _notifyIcon = new NotifyIcon
         {
-            Icon = SystemIcons.Application,
+            Icon = _ownedIcon ?? SystemIcons.Application,
             Text = "한키 - 준비 중",
             ContextMenuStrip = menu,
             Visible = true
         };
-        _notifyIcon.DoubleClick += (_, _) => OpenRequested?.Invoke(this, EventArgs.Empty);
+        _notifyIcon.MouseClick += (_, args) =>
+        {
+            if (args.Button != MouseButtons.Left)
+                return;
+
+            var now = Environment.TickCount64;
+            var previous = Interlocked.Exchange(ref _lastIconOpenAt, now);
+            if (unchecked(now - previous) >= 350)
+                OpenRequested?.Invoke(this, EventArgs.Empty);
+        };
     }
 
     public event EventHandler? OpenRequested;
@@ -56,7 +81,7 @@ public sealed class TrayIconService : IDisposable
             return;
         _balloonShown = true;
         _notifyIcon.BalloonTipTitle = "한키가 트레이에서 실행 중입니다";
-        _notifyIcon.BalloonTipText = "아이콘을 두 번 클릭하면 다시 열 수 있습니다.";
+        _notifyIcon.BalloonTipText = "아이콘을 클릭하면 다시 열 수 있습니다.";
         _notifyIcon.ShowBalloonTip(2500);
     }
 
@@ -64,5 +89,6 @@ public sealed class TrayIconService : IDisposable
     {
         _notifyIcon.Visible = false;
         _notifyIcon.Dispose();
+        _ownedIcon?.Dispose();
     }
 }

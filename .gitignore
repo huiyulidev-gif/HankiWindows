@@ -37,7 +37,16 @@ logs/
 .env.*
 !.env.example
 
+# Local Supabase auth config (public URL + publishable key, but kept out of source control
+# by convention). Commit only the .example template with empty values.
+hanki.auth.config.json
+!hanki.auth.config.json.example
+auth.session
+
 Hanki.manual-test-*
 *manual-test-backup*
 *.bak
 *.tmp
+
+# tools/ has one-off logo-rendering scripts (sharp via npm); the tool itself isn't committed.
+tools/node_modules/

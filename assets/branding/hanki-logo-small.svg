@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="hankiBgGradSmall" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#3977F6"/>
+      <stop offset="52%" stop-color="#1FA7DE"/>
+      <stop offset="100%" stop-color="#14D2CC"/>
+    </linearGradient>
+  </defs>
+
+  <!-- App icon canvas: rounded square, transparent outside -->
+  <rect x="24" y="24" width="976" height="976" rx="216" ry="216" fill="url(#hankiBgGradSmall)"/>
+
+  <!-- H mark: wider legs and a flat, high-contrast fill for legibility at 16-32px -->
+  <g fill="#F4FEFF">
+    <rect x="280" y="278" width="176" height="468" rx="40" ry="40"/>
+    <rect x="568" y="278" width="176" height="468" rx="40" ry="40"/>
+    <rect x="456" y="443" width="112" height="138"/>
+  </g>
+
+  <!-- Upward-right growth arrow: a dark keyline keeps it distinct from the white H at 16px. -->
+  <line x1="548" y1="486" x2="690" y2="344" stroke="#147FC3" stroke-width="82" stroke-linecap="round"/>
+  <path d="M778 264 L750 386 L650 286 Z" fill="#147FC3"/>
+  <line x1="548" y1="486" x2="690" y2="344" stroke="#A7E7FF" stroke-width="54" stroke-linecap="round"/>
+  <path d="M764 278 L742 372 L664 296 Z" fill="#D8F7FF"/>
+
+  <!-- Sparkle: single simplified mark -->
+  <path d="M862 150 L878 202 L928 220 L878 238 L862 290 L846 238 L796 220 L846 202 Z" fill="#F4FEFF"/>
+</svg>

@@ -1,6 +1,6 @@
 #define MyAppName "한키"
 #define MyAppEnglishName "Hanki"
-#define MyAppVersion "0.1.0"
+#define MyAppVersion "0.1.1"
 #define MyAppPublisher "Yulbyte"
 #define MyAppExeName "Hanki.exe"
 
@@ -26,6 +26,7 @@ CloseApplications=yes
 RestartApplications=no
 UninstallDisplayIcon={app}\{#MyAppExeName}
 UninstallDisplayName={#MyAppName}
+SetupIconFile=..\assets\branding\hanki-logo.ico
 VersionInfoVersion={#MyAppVersion}
 VersionInfoCompany={#MyAppPublisher}
 VersionInfoDescription={#MyAppName} Windows 데스크톱 앱
@@ -35,7 +36,7 @@ VersionInfoProductName={#MyAppName}
 Name: "desktopicon"; Description: "바탕 화면 바로가기 만들기"; GroupDescription: "추가 바로가기:"; Flags: unchecked
 
 [Files]
-Source: "..\dist\Hanki-0.1.0-win-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\dist\Hanki-0.1.1-win-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

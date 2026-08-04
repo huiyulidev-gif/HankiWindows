@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Input;
 using Hanki.App.ViewModels;
 using Hanki.Core.Models;
 using Microsoft.Win32;
@@ -7,19 +8,32 @@ namespace Hanki.App;
 
 public partial class MainWindow : Window
 {
-    public MainWindow(MainViewModel viewModel)
+    public MainWindow(MainViewModel viewModel, AccountViewModel accountViewModel)
     {
         InitializeComponent();
         ViewModel = viewModel;
+        Account = accountViewModel;
         DataContext = viewModel;
+        AccountTabRoot.DataContext = accountViewModel;
         viewModel.EditRequested += OnEditRequested;
         viewModel.DeleteRequested += OnDeleteRequested;
     }
 
     public MainViewModel ViewModel { get; }
+    public AccountViewModel Account { get; }
 
     public void OpenNewShortcut() => OnEditRequested(this, null);
     public void ShowSettings() => MainTabs.SelectedIndex = 1;
+
+    private void MainWindow_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (e.Key != Key.Escape || !Account.IsLoggingIn)
+            return;
+
+        if (Account.CancelCommand.CanExecute(null))
+            Account.CancelCommand.Execute(null);
+        e.Handled = true;
+    }
 
     private async void OnEditRequested(object? sender, ShortcutItem? shortcut)
     {

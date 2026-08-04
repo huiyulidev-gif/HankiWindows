@@ -1,0 +1,5 @@
+{
+  "supabaseUrl": "",
+  "supabasePublishableKey": "",
+  "redirectUri": "http://127.0.0.1:43289/auth/callback"
+}
