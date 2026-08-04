@@ -14,7 +14,9 @@
 | 설치된 0.2.0 회귀 | PASS | 실행, 계정 탭/로고, 5회 단일 인스턴스, 종료/포트 정리 |
 | Yulbyte site lint/typecheck/test/build/link | PASS | 22/22 및 각 명령 성공 |
 | Authenticode | 사용자 승인 필요 | `NotSigned` |
-| 공개 Release/사이트 공개 | 미실행 | GitHub Release와 Vercel은 커밋 후 진행 |
+| GitHub Release/자산 재다운로드 | PASS | v0.2.0 공개, 설치본·Portable·SHA256SUMS 재다운로드 해시 일치 |
+| Yulbyte source 공개 metadata | PASS | `published=true`, 실제 GitHub URL·SHA-256, yulbyte-site `5d8668c` |
+| Vercel production 공개 반영 | 사용자 설정 필요 | 도메인 HTTP 200이나 이전 0.1.0 HTML; Vercel 로그인/배포 설정 필요 |
 
 ## 정식 산출물
 
@@ -38,4 +40,4 @@
 
 ## 공개 작업 상태
 
-아직 commit, push, tag, GitHub Release, Vercel production 배포, 공개 다운로드 활성화는 실행하지 않았습니다. 이 문서는 정식 패키지와 설치 검증 완료 시점의 기록입니다.
+GitHub Release와 HankiWindows/yulbyte-site의 일반 commit·push·tag는 완료했습니다. Vercel production은 프로젝트 로그인/배포 설정이 없어 공개 HTML 갱신을 확인하지 못했으며, Supabase migration은 실행하지 않았습니다.

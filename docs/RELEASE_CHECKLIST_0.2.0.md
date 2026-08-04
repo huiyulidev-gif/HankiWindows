@@ -11,9 +11,9 @@
 | RC2→0.2.0 설치 및 데이터 보존 | PASS |
 | Defender 검사 | PASS |
 | Authenticode | 사용자 승인 필요 |
-| HankiWindows commit/push | 미실행 |
-| v0.2.0 tag push | 미실행 |
-| GitHub Release | 미실행 |
-| 자산 재다운로드 검증 | 미실행 |
-| Yulbyte published=true | 미실행 |
-| Vercel production | 미실행 |
+| HankiWindows commit/push | PASS |
+| v0.2.0 tag push | PASS |
+| GitHub Release | PASS |
+| 자산 재다운로드 검증 | PASS |
+| Yulbyte published=true | PASS |
+| Vercel production | 사용자 설정 필요 |

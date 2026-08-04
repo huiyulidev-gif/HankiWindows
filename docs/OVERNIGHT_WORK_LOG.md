@@ -199,3 +199,14 @@
 - 사이트 내부 RC2 metadata만 변경하고 `published=false`·URL 없음 유지: PASS. 공개 배포는 미실행.
 - 사이트 lint/typecheck/test/build/link check: PASS (22/22). format script는 없어 미실행으로 기록했습니다.
 - 2026-08-05 사용자 수동 검증 결과: Google 계정 선택/다른 계정 사용, 기존 Chrome 계정 자동 확정 방지, 주요 앱 치환, 비밀번호 보호, 제외 앱·사이트, 자동 시작, 설치·시작 메뉴·작업표시줄·Alt+Tab·트레이·계정 UI·DPI를 모두 **PASS**로 확인했습니다. RC2 판정을 `RELEASE_READY`로 변경했습니다.
+
+## 2026-08-05 정식 0.2.0 공개 및 사이트 반영
+
+- HankiWindows `release: prepare Hanki 0.2.0` commit `f9e15f9`, 일반 push, annotated tag `v0.2.0` push: **PASS**.
+- GitHub Release `한키 0.2.0` 공개 및 설치본·Portable·SHA256SUMS 업로드: **PASS**. Release는 latest이며 draft/prerelease가 아닙니다.
+- 공개 자산 임시 재다운로드, ZIP 압축 해제, 제품 버전·해시·Authenticode 확인: **PASS**. 실제 해시는 `docs/POST_RELEASE_VERIFICATION_0.2.0.md`에 기록했습니다.
+- yulbyte-site에 `published=true`, 실제 GitHub Release URL·SHA-256·설치형/Portable 버튼 반영. 사이트 commit `5d8668c`를 `main`에 push: **PASS**.
+- yulbyte-site lint/typecheck/test 22/22/build/internal link check: **PASS**.
+- `www.yulbyte.com`, `/hanki`, `/updates`, `/guide` HTTP 200: **PASS**. 다만 공개 HTML은 이전 Vercel 0.1.0 배포를 반환했습니다.
+- Vercel 대시보드는 로그인 필요 상태여서 production 배포를 강행하지 않음: **사용자 설정 필요**. 새 배포 후 `/hanki` 링크/해시를 재검증해야 합니다.
+- Supabase migration, 추가 사용자 데이터 삭제, code signing은 실행하지 않음. Hanki 설치본은 최종 프로세스 0개·43289 미청취 상태로 정리했습니다.

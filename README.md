@@ -13,8 +13,7 @@
 
 0.2.0 설치본은 GitHub Release `v0.2.0`에서 제공합니다.
 0.1.1 후보는 검증 보존을 위해 `dist/HankiSetup-0.1.1.exe`에 그대로 유지합니다.
-두 개발 후보 모두 아직 GitHub Release에는 게시하지 않았습니다.
-현재 공개 버전은 [HankiSetup-0.1.0.exe](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.1.0/HankiSetup-0.1.0.exe)입니다.
+정식 공개 설치본은 [HankiSetup-0.2.0.exe](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.2.0/HankiSetup-0.2.0.exe)입니다.
 
 사용자 계정 범위에 설치되므로 관리자 권한은 필요하지 않습니다.
 바탕 화면 바로가기는 설치 중 선택할 수 있습니다.
@@ -27,7 +26,7 @@ Windows용 코드 서명 인증서가 아직 없으므로 Microsoft Defender Sma
 
 0.2.0 Portable은 GitHub Release `v0.2.0`에서 제공합니다.
 보존된 0.1.1 후보는 `dist/Hanki-0.1.1-win-x64.zip`이며, 현재 공개 Portable 버전은
-[Hanki-0.1.0-win-x64.zip](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.1.0/Hanki-0.1.0-win-x64.zip)입니다.
+[Hanki-0.2.0-win-x64.zip](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.2.0/Hanki-0.2.0-win-x64.zip)입니다.
 
 1. ZIP을 원하는 폴더에 압축 해제합니다.
 2. `Hanki.exe`를 실행합니다.
@@ -37,7 +36,7 @@ Windows용 코드 서명 인증서가 아직 없으므로 Microsoft Defender Sma
 실행 파일 위치를 옮긴 뒤 Windows 자동 실행을 사용하는 경우 설정에서 자동 실행을 껐다가 다시 켜 경로를 갱신하세요.
 
 - [최신 Release 페이지](https://github.com/huiyulidev-gif/HankiWindows/releases/latest)
-- [SHA-256 체크섬](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.1.0/SHA256SUMS.txt)
+- [SHA-256 체크섬](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.2.0/SHA256SUMS-0.2.0.txt)
 
 ## 단축어 사용
 
