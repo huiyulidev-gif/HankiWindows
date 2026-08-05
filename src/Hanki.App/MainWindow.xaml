@@ -35,8 +35,18 @@
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding IsEnabled, StringFormat=변환 상태: {0}}"
-                               Foreground="#E8E1FA" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                    <TextBlock Foreground="#E8E1FA" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="변환 상태: 꺼짐"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEnabled}" Value="True">
+                                        <Setter Property="Text" Value="변환 상태: 켜짐"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                     <CheckBox IsChecked="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               ToolTip="전체 단축어 변환 켜기/끄기"
                               Width="22" Height="22"/>
