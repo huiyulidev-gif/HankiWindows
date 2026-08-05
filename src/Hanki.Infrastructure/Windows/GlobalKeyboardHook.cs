@@ -23,6 +23,43 @@ public sealed record HookKeyEvent(
     bool IsHankiInjected,
     HookModifierKeys Modifiers);
 
+public static class HookEventPolicy
+{
+    private const uint VkTab = 0x09;
+    private const uint VkReturn = 0x0D;
+    private const uint VkSpace = 0x20;
+
+    public static bool TryGetDelimiter(HookKeyEvent keyEvent, out Hanki.Core.Diagnostics.DelimiterKey delimiter)
+    {
+        delimiter = default;
+        if (keyEvent.IsKeyDown ||
+            keyEvent.IsHankiInjected ||
+            (keyEvent.Modifiers &
+             (HookModifierKeys.Control | HookModifierKeys.Alt | HookModifierKeys.Windows)) != 0)
+        {
+            return false;
+        }
+
+        switch (keyEvent.VirtualKeyCode)
+        {
+            case VkSpace:
+                delimiter = Hanki.Core.Diagnostics.DelimiterKey.Space;
+                return true;
+            case VkReturn when keyEvent.IsExtended:
+                delimiter = Hanki.Core.Diagnostics.DelimiterKey.NumpadEnter;
+                return true;
+            case VkReturn:
+                delimiter = Hanki.Core.Diagnostics.DelimiterKey.Enter;
+                return true;
+            case VkTab:
+                delimiter = Hanki.Core.Diagnostics.DelimiterKey.Tab;
+                return true;
+            default:
+                return false;
+        }
+    }
+}
+
 public sealed class GlobalKeyboardHook : IDisposable
 {
     public const nuint InjectionMarker = 0x48414E4B;

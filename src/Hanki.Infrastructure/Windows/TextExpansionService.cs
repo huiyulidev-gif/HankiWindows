@@ -15,9 +15,6 @@ public sealed class TextExpansionService : IDisposable
     public const string CompatibilityTestTrigger = ";hankitest";
     public const string CompatibilityTestReplacement = "한키 입력 테스트 성공";
     private const string CompatibilityTestShortcutId = "23ba044b-1a60-4fd9-93d5-09caafc1c4b5";
-    private const uint VkTab = 0x09;
-    private const uint VkReturn = 0x0D;
-    private const uint VkSpace = 0x20;
 
     private readonly IShortcutRepository _repository;
     private readonly GlobalKeyboardHook _hook;
@@ -252,14 +249,7 @@ public sealed class TextExpansionService : IDisposable
                 if (!keyEvent.IsKeyDown)
                     Interlocked.Exchange(ref _hookSelfTest, null)?.TrySetResult(true);
 
-                if (keyEvent.IsKeyDown ||
-                    (keyEvent.Modifiers & (HookModifierKeys.Control | HookModifierKeys.Alt | HookModifierKeys.Windows)) != 0)
-                {
-                    continue;
-                }
-
-                var delimiter = MapDelimiter(keyEvent);
-                if (delimiter is null)
+                if (!HookEventPolicy.TryGetDelimiter(keyEvent, out var delimiter))
                     continue;
 
                 _diagnostics.Record(CompatibilityDiagnosticsService.NewEvent(
@@ -268,7 +258,7 @@ public sealed class TextExpansionService : IDisposable
                 _diagnostics.UpdateInputEnvironment(_environmentInspector.Capture(delimiter));
 
                 await Task.Delay(TimeSpan.FromMilliseconds(65), cancellationToken);
-                await TryExpandAsync(delimiter.Value, cancellationToken);
+                await TryExpandAsync(delimiter, cancellationToken);
             }
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -304,7 +294,7 @@ public sealed class TextExpansionService : IDisposable
                 shortcuts = [.. shortcuts, temporaryTest.Shortcut.Clone()];
         }
 
-        var initialBlock = GetInitialBlockReason(settings, shortcuts, delimiter);
+        var initialBlock = ExpansionPolicy.GetInitialBlockReason(settings, shortcuts.Length, delimiter);
         if (initialBlock != ExpansionBlockReason.None)
         {
             RecordBlock(initialBlock, delimiter, null, InputContextStatus.InformationUnavailable);
@@ -664,37 +654,6 @@ public sealed class TextExpansionService : IDisposable
 
     private static string? ErrorCode(InputSendResult result) =>
         result.IsSuccess ? null : $"win32_{result.Win32Error}";
-
-    private static DelimiterKey? MapDelimiter(HookKeyEvent keyEvent) =>
-        keyEvent.VirtualKeyCode switch
-        {
-            VkSpace => DelimiterKey.Space,
-            VkReturn when keyEvent.IsExtended => DelimiterKey.NumpadEnter,
-            VkReturn => DelimiterKey.Enter,
-            VkTab => DelimiterKey.Tab,
-            _ => null
-        };
-
-    private static ExpansionBlockReason GetInitialBlockReason(
-        AppSettings settings,
-        IReadOnlyCollection<ShortcutItem> shortcuts,
-        DelimiterKey delimiter)
-    {
-        if (!settings.IsEnabled)
-            return ExpansionBlockReason.FeatureDisabled;
-        if (settings.IsPaused)
-            return ExpansionBlockReason.Paused;
-        if (shortcuts.Count == 0)
-            return ExpansionBlockReason.NoShortcuts;
-        var delimiterEnabled = delimiter switch
-        {
-            DelimiterKey.Space => settings.SpaceExpansionEnabled,
-            DelimiterKey.Enter or DelimiterKey.NumpadEnter => settings.EnterExpansionEnabled,
-            DelimiterKey.Tab => settings.TabExpansionEnabled,
-            _ => false
-        };
-        return delimiterEnabled ? ExpansionBlockReason.None : ExpansionBlockReason.DelimiterDisabled;
-    }
 
     private static ExpansionBlockReason MapInputContextBlock(InputContextStatus status) => status switch
     {
