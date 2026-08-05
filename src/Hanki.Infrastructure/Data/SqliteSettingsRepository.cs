@@ -22,12 +22,18 @@ public sealed class SqliteSettingsRepository(SqliteDatabase database) : ISetting
         return new AppSettings
         {
             IsEnabled = ReadBool(values, "is_enabled", defaults.IsEnabled),
+            IsPaused = ReadBool(values, "is_paused", defaults.IsPaused),
             StartWithWindows = ReadBool(values, "start_with_windows", defaults.StartWithWindows),
             MinimizeToTray = ReadBool(values, "minimize_to_tray", defaults.MinimizeToTray),
             SpaceExpansionEnabled = ReadBool(values, "space_enabled", defaults.SpaceExpansionEnabled),
             EnterExpansionEnabled = ReadBool(values, "enter_enabled", defaults.EnterExpansionEnabled),
             TabExpansionEnabled = ReadBool(values, "tab_enabled", defaults.TabExpansionEnabled),
+            ClipboardCompatibilityMode = ReadBool(
+                values,
+                "clipboard_compatibility_mode",
+                defaults.ClipboardCompatibilityMode),
             ExcludedProcesses = ReadList(values, "excluded_processes", defaults.ExcludedProcesses),
+            ExcludedSites = ReadList(values, "excluded_sites", defaults.ExcludedSites),
             Theme = values.GetValueOrDefault("theme", defaults.Theme),
             FirstRunCompleted = ReadBool(values, "first_run_completed", defaults.FirstRunCompleted)
         };
@@ -38,12 +44,16 @@ public sealed class SqliteSettingsRepository(SqliteDatabase database) : ISetting
         var values = new Dictionary<string, string>
         {
             ["is_enabled"] = settings.IsEnabled.ToString(CultureInfo.InvariantCulture),
+            ["is_paused"] = settings.IsPaused.ToString(CultureInfo.InvariantCulture),
             ["start_with_windows"] = settings.StartWithWindows.ToString(CultureInfo.InvariantCulture),
             ["minimize_to_tray"] = settings.MinimizeToTray.ToString(CultureInfo.InvariantCulture),
             ["space_enabled"] = settings.SpaceExpansionEnabled.ToString(CultureInfo.InvariantCulture),
             ["enter_enabled"] = settings.EnterExpansionEnabled.ToString(CultureInfo.InvariantCulture),
             ["tab_enabled"] = settings.TabExpansionEnabled.ToString(CultureInfo.InvariantCulture),
+            ["clipboard_compatibility_mode"] =
+                settings.ClipboardCompatibilityMode.ToString(CultureInfo.InvariantCulture),
             ["excluded_processes"] = JsonSerializer.Serialize(settings.ExcludedProcesses),
+            ["excluded_sites"] = JsonSerializer.Serialize(settings.ExcludedSites),
             ["theme"] = settings.Theme,
             ["first_run_completed"] = settings.FirstRunCompleted.ToString(CultureInfo.InvariantCulture)
         };

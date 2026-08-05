@@ -4,6 +4,7 @@
              xmlns:converters="clr-namespace:Hanki.App.Converters">
     <Application.Resources>
         <converters:NullOrEmptyToVisibilityConverter x:Key="NullOrEmptyToVisibilityConverter"/>
+        <converters:CompatibilityEnumDisplayConverter x:Key="CompatibilityEnumDisplayConverter"/>
         <SolidColorBrush x:Key="Purple600" Color="#7357D9"/>
         <SolidColorBrush x:Key="Purple700" Color="#5C3FC4"/>
         <SolidColorBrush x:Key="Purple050" Color="#F6F3FF"/>

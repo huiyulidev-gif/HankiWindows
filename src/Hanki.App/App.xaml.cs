@@ -8,6 +8,7 @@ using Hanki.App.ViewModels;
 using Hanki.Infrastructure;
 using Hanki.Infrastructure.Authentication;
 using Hanki.Infrastructure.Data;
+using Hanki.Infrastructure.Diagnostics;
 using Hanki.Infrastructure.Logging;
 using Hanki.Infrastructure.Windows;
 using Hanki.Core.Contracts;
@@ -23,6 +24,7 @@ public partial class App : System.Windows.Application
     private SingleInstanceManager? _singleInstance;
     private PrivacySafeLogger? _logger;
     private TextExpansionService? _expansionService;
+    private CompatibilityDiagnosticsService? _diagnostics;
     private TrayIconService? _tray;
     private MainViewModel? _mainViewModel;
     private AccountViewModel? _accountViewModel;
@@ -88,7 +90,12 @@ public partial class App : System.Windows.Application
             var backupService = new JsonBackupService(shortcutRepository, settingsRepository, validator);
             var autoStartService = new AutoStartService();
             var hook = new GlobalKeyboardHook();
-            _expansionService = new TextExpansionService(shortcutRepository, hook, _logger);
+            _diagnostics = new CompatibilityDiagnosticsService();
+            _expansionService = new TextExpansionService(
+                shortcutRepository,
+                hook,
+                _logger,
+                _diagnostics);
 
             _mainViewModel = new MainViewModel(
                 shortcutRepository,
@@ -246,6 +253,7 @@ public partial class App : System.Windows.Application
         _isExiting = true;
         Interlocked.Exchange(ref _activationPending, 0);
         _tray?.Dispose();
+        _mainViewModel?.Dispose();
         _expansionService?.Dispose();
         _accountViewModel?.Dispose();
         _authCoordinator?.Dispose();
