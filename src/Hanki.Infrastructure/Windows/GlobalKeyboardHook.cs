@@ -105,7 +105,10 @@ public sealed class GlobalKeyboardHook : IDisposable
                 return;
 
             StopCore();
-            using var ready = new ManualResetEventSlim(false);
+            // The hook thread may reference this signal again while shutting down, long after
+            // Start has returned. ManualResetEventSlim stays managed-only here, so keeping the
+            // tiny signal alive with the thread avoids a dispose race in the finally block.
+            var ready = new ManualResetEventSlim(false);
             _registrationException = null;
             _thread = new Thread(() => RunMessageLoop(ready))
             {

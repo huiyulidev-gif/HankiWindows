@@ -110,6 +110,39 @@ public sealed class ExpansionInjectionTests
         Assert.AreEqual(ClipboardRestoreStatus.SkippedBecauseClipboardChanged, result.RestoreStatus);
     }
 
+    [TestMethod]
+    public async Task ClipboardRestoreFailure_IsReportedAndStopsDelimiter()
+    {
+        var clipboard = new FakeClipboardAdapter { Current = "original", ThrowOnRestore = true };
+        var sender = new FakeInputSender();
+        var coordinator = new ExpansionInjectionCoordinator(
+            sender,
+            new ClipboardCompatibilityService(clipboard, TimeSpan.Zero));
+
+        var result = await coordinator.InjectAsync(
+            2,
+            "temporary",
+            DelimiterKey.Space,
+            useClipboard: true);
+
+        Assert.AreEqual(ExpansionResultStatus.PartialFailure, result.Status);
+        Assert.AreEqual(ClipboardRestoreStatus.Failed, result.Clipboard?.RestoreStatus);
+        Assert.IsNull(result.Delimiter);
+        CollectionAssert.DoesNotContain(sender.Calls, InputInjectionStage.Delimiter);
+    }
+
+    [TestMethod]
+    public void WindowsInputSender_ZeroLengthOperationsAreSuccessfulNoOps()
+    {
+        var sender = new WindowsInputSender();
+        var backspace = sender.SendBackspaces(0);
+        var text = sender.SendUnicodeText(string.Empty);
+        Assert.IsTrue(backspace.IsSuccess);
+        Assert.IsTrue(text.IsSuccess);
+        Assert.AreEqual(0, backspace.RequestedInputs);
+        Assert.AreEqual(0, text.SentInputs);
+    }
+
     private sealed class FakeInputSender : IInputSender
     {
         public List<InputInjectionStage> Calls { get; } = [];
@@ -150,6 +183,7 @@ public sealed class ExpansionInjectionTests
         private uint _sequence = 1;
         public object? Current { get; set; }
         public List<string> ObservedValues { get; } = [];
+        public bool ThrowOnRestore { get; init; }
 
         public uint GetSequenceNumber() => _sequence;
 
@@ -164,6 +198,8 @@ public sealed class ExpansionInjectionTests
 
         public void Restore(object? snapshot)
         {
+            if (ThrowOnRestore)
+                throw new InvalidOperationException("simulated clipboard restore failure");
             Current = snapshot;
             _sequence++;
         }

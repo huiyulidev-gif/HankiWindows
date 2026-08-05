@@ -49,6 +49,9 @@ public sealed class TextExpansionService : IDisposable
     private DateTimeOffset? _nextRestartAtUtc;
     private int _consecutiveRestartFailures;
     private int _droppedHookEvents;
+    private string? _lastForegroundProcessName;
+    private string? _lastKeyboardLayout;
+    private bool? _lastImeOpen;
     private bool _started;
     private bool _disposed;
 
@@ -94,6 +97,7 @@ public sealed class TextExpansionService : IDisposable
 
         if (!TryStartHook("hook.initial"))
             _ = RecoverHookAsync(resetBudget: false, "hook.initial_retry", _shutdown.Token);
+        RefreshDiagnostics();
     }
 
     public void UpdateConfiguration(AppSettings settings, IEnumerable<ShortcutItem> shortcuts)
@@ -175,8 +179,9 @@ public sealed class TextExpansionService : IDisposable
     public CompatibilityDiagnosticSnapshot RefreshDiagnostics(DelimiterKey? delimiter = null)
     {
         var input = _environmentInspector.Capture(delimiter);
-        _diagnostics.UpdateInputEnvironment(input);
+        UpdateInputEnvironment(input);
         var integrity = _integrityInspector.InspectForeground();
+        RecordForegroundChange(integrity.Target.ProcessName);
         _diagnostics.SetHankiIntegrity(integrity.Hanki.Integrity);
         _diagnostics.UpdateTarget(new TargetDiagnosticState(
             integrity.Target.ProcessName,
@@ -255,7 +260,7 @@ public sealed class TextExpansionService : IDisposable
                 _diagnostics.Record(CompatibilityDiagnosticsService.NewEvent(
                     CompatibilityEventKind.DelimiterDetected,
                     delimiter: delimiter));
-                _diagnostics.UpdateInputEnvironment(_environmentInspector.Capture(delimiter));
+                UpdateInputEnvironment(_environmentInspector.Capture(delimiter));
 
                 await Task.Delay(TimeSpan.FromMilliseconds(65), cancellationToken);
                 await TryExpandAsync(delimiter, cancellationToken);
@@ -317,6 +322,7 @@ public sealed class TextExpansionService : IDisposable
             {
                 var integrity = _integrityInspector.InspectForeground();
                 var processName = integrity.Target.ProcessName;
+                RecordForegroundChange(processName);
                 var processDecision = new ProcessExclusionPolicy(settings.ExcludedProcesses).Evaluate(processName);
 
                 if (integrity.IsSecureDesktop)
@@ -408,7 +414,7 @@ public sealed class TextExpansionService : IDisposable
                 }
 
                 var environment = _environmentInspector.Capture(delimiter);
-                _diagnostics.UpdateInputEnvironment(environment);
+                UpdateInputEnvironment(environment);
                 if (environment.ImeComposing == true)
                 {
                     UpdateTargetAndBlock(
@@ -479,6 +485,22 @@ public sealed class TextExpansionService : IDisposable
                     processName: processName,
                     delimiter: delimiter,
                     shortcutId: match.Id));
+
+                var beforeInjection = _integrityInspector.InspectForeground();
+                if (beforeInjection.Target.ProcessId != integrity.Target.ProcessId ||
+                    beforeInjection.Target.ProcessId == 0)
+                {
+                    UpdateTargetAndBlock(
+                        beforeInjection,
+                        ExpansionBlockReason.InformationUnavailable,
+                        InputContextStatus.InformationUnavailable,
+                        ProcessExclusionReason.ProcessUnavailable,
+                        false,
+                        "target.changed_before_injection",
+                        delimiter);
+                    return;
+                }
+
                 _diagnostics.Record(CompatibilityDiagnosticsService.NewEvent(
                     CompatibilityEventKind.ExpansionInjectionStarted,
                     processName: processName,
@@ -487,6 +509,15 @@ public sealed class TextExpansionService : IDisposable
                     noteCode: settings.ClipboardCompatibilityMode
                         ? "injection.clipboard_mode"
                         : "injection.direct_mode"));
+                if (settings.ClipboardCompatibilityMode)
+                {
+                    _diagnostics.Record(CompatibilityDiagnosticsService.NewEvent(
+                        CompatibilityEventKind.ClipboardPasteStarted,
+                        processName: processName,
+                        delimiter: delimiter,
+                        shortcutId: match.Id,
+                        noteCode: "clipboard.paste_started"));
+                }
 
                 var deleteKeyPresses = StringInfo.ParseCombiningCharacters(match.TriggerText).Length + 1;
                 var result = await _injection.InjectAsync(
@@ -845,6 +876,39 @@ public sealed class TextExpansionService : IDisposable
             _diagnostics.Capture().Hook.LastDelimiterAtUtc,
             _consecutiveRestartFailures,
             _nextRestartAtUtc));
+    }
+
+    private void RecordForegroundChange(string? processName)
+    {
+        if (string.Equals(_lastForegroundProcessName, processName, StringComparison.OrdinalIgnoreCase))
+            return;
+        _lastForegroundProcessName = processName;
+        _diagnostics.Record(CompatibilityDiagnosticsService.NewEvent(
+            CompatibilityEventKind.ForegroundProcessChanged,
+            processName: processName,
+            noteCode: "target.foreground_changed"));
+    }
+
+    private void UpdateInputEnvironment(InputEnvironmentState environment)
+    {
+        if (!string.Equals(_lastKeyboardLayout, environment.KeyboardLayout, StringComparison.Ordinal))
+        {
+            _lastKeyboardLayout = environment.KeyboardLayout;
+            _diagnostics.Record(CompatibilityDiagnosticsService.NewEvent(
+                CompatibilityEventKind.KeyboardLayoutChanged,
+                keyboardLayout: environment.KeyboardLayout,
+                noteCode: "input.keyboard_layout_changed"));
+        }
+        if (_lastImeOpen != environment.ImeOpen)
+        {
+            _lastImeOpen = environment.ImeOpen;
+            _diagnostics.Record(CompatibilityDiagnosticsService.NewEvent(
+                CompatibilityEventKind.ImeStateChanged,
+                keyboardLayout: environment.KeyboardLayout,
+                imeOpen: environment.ImeOpen,
+                noteCode: "input.ime_state_changed"));
+        }
+        _diagnostics.UpdateInputEnvironment(environment);
     }
 
     private void OnSessionSwitch(object sender, SessionSwitchEventArgs e)

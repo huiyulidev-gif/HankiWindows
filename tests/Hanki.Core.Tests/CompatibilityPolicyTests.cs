@@ -119,6 +119,15 @@ public sealed class CompatibilityPolicyTests
     }
 
     [TestMethod]
+    public void HookPolicy_AllowsShiftModifiedDelimiter()
+    {
+        Assert.IsTrue(HookEventPolicy.TryGetDelimiter(
+            KeyEvent(0x20, modifiers: HookModifierKeys.Shift),
+            out var delimiter));
+        Assert.AreEqual(DelimiterKey.Space, delimiter);
+    }
+
+    [TestMethod]
     public void HookPolicy_IgnoresHankiInjection_ButAllowsExternalAccessibilityInjection()
     {
         Assert.IsFalse(HookEventPolicy.TryGetDelimiter(
@@ -170,6 +179,22 @@ public sealed class CompatibilityPolicyTests
         Assert.AreEqual(
             ExpansionBlockReason.DelimiterDisabled,
             ExpansionPolicy.GetInitialBlockReason(settings, 1, delimiter));
+    }
+
+    [TestMethod]
+    [TestCategory("WindowsIntegration")]
+    public void CurrentProcessIntegrityAndInputEnvironment_AreInspectable()
+    {
+        var process = new ProcessIntegrityInspector().InspectProcess(Environment.ProcessId);
+        Assert.AreEqual(ProcessInspectionStatus.Available, process.Status);
+        Assert.AreNotEqual(ProcessIntegrityLevel.Unknown, process.Integrity);
+        StringAssert.EndsWith(process.ProcessName, ".exe");
+
+        var input = new InputEnvironmentInspector().Capture(DelimiterKey.Space);
+        Assert.AreEqual(8, input.KeyboardLayout.Length);
+        Assert.IsTrue(input.KeyboardLayout.All(Uri.IsHexDigit));
+        Assert.AreEqual(DelimiterKey.Space, input.SelectedDelimiter);
+        Assert.IsTrue(input.WindowsSessionId >= 0);
     }
 
     private static HookKeyEvent KeyEvent(

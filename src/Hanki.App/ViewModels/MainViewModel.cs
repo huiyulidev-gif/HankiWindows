@@ -448,9 +448,12 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             $"조합 중: {BoolDisplayName(snapshot.InputEnvironment.ImeComposing)}\n" +
             $"Caps Lock: {OnOff(snapshot.InputEnvironment.CapsLock)} · " +
             $"Num Lock: {OnOff(snapshot.InputEnvironment.NumLock)} · " +
-            $"세션: {snapshot.InputEnvironment.WindowsSessionId}";
+            $"세션: {snapshot.InputEnvironment.WindowsSessionId} · " +
+            $"선택 종결자: {snapshot.InputEnvironment.SelectedDelimiter?.ToString() ?? "없음"}";
         DiagnosticProcessingStatus =
             $"결과: {ProcessingStatusDisplayName(snapshot.Processing.Status)}\n" +
+            $"후보: {FormatTimestamp(snapshot.Processing.LastCandidateAtUtc)} · " +
+            $"일치: {FormatTimestamp(snapshot.Processing.LastMatchAtUtc)}\n" +
             $"삭제 {snapshot.Processing.BackspaceSent}/{snapshot.Processing.BackspaceRequested} · " +
             $"변환문 {snapshot.Processing.TextSent}/{snapshot.Processing.TextRequested} · " +
             $"종결자 {snapshot.Processing.DelimiterSent}/{snapshot.Processing.DelimiterRequested}\n" +
