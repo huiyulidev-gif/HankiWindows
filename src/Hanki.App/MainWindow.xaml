@@ -236,7 +236,7 @@
                             </StackPanel>
                         </Border>
 
-                        <TextBlock Text="한키 0.2.1-rc.1 · Yulbyte" FontWeight="SemiBold" Margin="0,22,0,0"/>
+                        <TextBlock Text="한키 0.2.1 · Yulbyte" FontWeight="SemiBold" Margin="0,22,0,0"/>
                         <TextBlock Text="지원: huiyuli.dev@gmail.com"
                                    Foreground="{StaticResource TextSecondary}" Margin="0,4,0,0"/>
                         <Button Content="설정 저장" Click="SaveSettingsButton_Click"

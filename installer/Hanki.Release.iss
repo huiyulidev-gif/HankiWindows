@@ -1,10 +1,10 @@
 #define MyAppName "한키"
-#define MyAppVersion "0.2.0"
-#define MyAppBinaryVersion "0.2.0.0"
+#define MyAppVersion "0.2.1"
+#define MyAppBinaryVersion "0.2.1.0"
 #define MyAppPublisher "Yulbyte"
 #define MyAppExeName "Hanki.exe"
-#define ReleaseOutputRoot "..\dist\0.2.0"
-#define ReleasePayload "..\dist\0.2.0\Hanki-0.2.0-win-x64"
+#define ReleaseOutputRoot "..\dist\0.2.1"
+#define ReleasePayload "..\dist\0.2.1\Hanki-0.2.1-win-x64"
 
 [Setup]
 AppId={{D17F11A7-3AE2-4B85-A6B0-5E4C0A1F7D0E}

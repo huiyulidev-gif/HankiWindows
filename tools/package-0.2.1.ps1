@@ -1,21 +1,22 @@
 [CmdletBinding()]
 param(
-    [switch]$Force
+    [switch]$Force,
+    [string]$AuthConfigPath
 )
 
 $ErrorActionPreference = 'Stop'
-$version = '0.2.1-rc.1'
+$version = '0.2.1'
 $binaryVersion = '0.2.1.0'
 $repo = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $distRoot = [System.IO.Path]::GetFullPath((Join-Path $repo "dist\$version"))
-$expectedDistRoot = [System.IO.Path]::GetFullPath((Join-Path $repo 'dist\0.2.1-rc.1'))
+$expectedDistRoot = [System.IO.Path]::GetFullPath((Join-Path $repo 'dist\0.2.1'))
 if (-not [string]::Equals($distRoot, $expectedDistRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
     throw "Unexpected output directory: $distRoot"
 }
 
 if (Test-Path -LiteralPath $distRoot) {
     if (-not $Force) {
-        throw "$distRoot already exists. Re-run with -Force only after confirming this RC directory may be replaced."
+        throw "$distRoot already exists. Re-run with -Force only after confirming this release directory may be replaced."
     }
     Remove-Item -LiteralPath $distRoot -Recurse -Force
 }
@@ -37,8 +38,22 @@ if ($LASTEXITCODE -ne 0) {
     throw "dotnet publish failed with exit code $LASTEXITCODE"
 }
 
-$privateAuthConfig = Join-Path $repo 'src\Hanki.App\hanki.auth.config.json'
+$privateAuthConfig = if ($AuthConfigPath) {
+    [System.IO.Path]::GetFullPath($AuthConfigPath)
+} else {
+    Join-Path $repo 'src\Hanki.App\hanki.auth.config.json'
+}
 if (Test-Path -LiteralPath $privateAuthConfig) {
+    $authConfigText = [System.IO.File]::ReadAllText($privateAuthConfig, [System.Text.Encoding]::UTF8)
+    if ($authConfigText -match '(?i)service_role|sb_secret_|client_secret|access_token|refresh_token|cookie') {
+        throw 'Auth config contains a server secret or session credential.'
+    }
+    $authConfig = $authConfigText | ConvertFrom-Json
+    $authKeys = @($authConfig.psobject.Properties.Name | Sort-Object)
+    $expectedAuthKeys = @('redirectUri', 'supabasePublishableKey', 'supabaseUrl')
+    if (($authKeys -join ',') -ne ($expectedAuthKeys -join ',')) {
+        throw "Unexpected auth config keys: $($authKeys -join ', ')"
+    }
     Copy-Item -LiteralPath $privateAuthConfig -Destination (Join-Path $payload 'hanki.auth.config.json')
 }
 Copy-Item -LiteralPath (Join-Path $repo 'README.md') -Destination (Join-Path $payload 'README.md')
@@ -56,9 +71,9 @@ foreach ($document in @(
 
 $guideName = "Hanki-$version-diagnostics-guide.md"
 $guidePath = Join-Path $distRoot $guideName
-Copy-Item -LiteralPath (Join-Path $repo 'docs\DIAGNOSTICS_GUIDE_0.2.1_RC1.md') -Destination $guidePath
+Copy-Item -LiteralPath (Join-Path $repo 'docs\DIAGNOSTICS_GUIDE_0.2.1.md') -Destination $guidePath
 Copy-Item -LiteralPath $guidePath -Destination (Join-Path $payload $guideName)
-Copy-Item -LiteralPath (Join-Path $repo 'RELEASE_NOTES_0.2.1_RC1.md') `
+Copy-Item -LiteralPath (Join-Path $repo 'RELEASE_NOTES_0.2.1.md') `
     -Destination (Join-Path $distRoot "RELEASE_NOTES-$version.md")
 
 $exe = Join-Path $payload 'Hanki.exe'
@@ -70,7 +85,7 @@ if ($versionInfo.ProductVersion -ne $version) {
     throw "Unexpected ProductVersion: $($versionInfo.ProductVersion)"
 }
 
-$portableZip = Join-Path $distRoot "Hanki-$version-win-x64-portable.zip"
+$portableZip = Join-Path $distRoot "Hanki-$version-win-x64.zip"
 Compress-Archive -LiteralPath $payload -DestinationPath $portableZip -CompressionLevel Optimal
 
 $isccCandidates = @(
@@ -81,7 +96,7 @@ $iscc = $isccCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Ob
 if (-not $iscc) {
     throw 'Inno Setup 6 ISCC.exe was not found.'
 }
-& $iscc (Join-Path $repo 'installer\Hanki.0.2.1-rc.1.iss')
+& $iscc (Join-Path $repo 'installer\Hanki.Release.iss')
 if ($LASTEXITCODE -ne 0) {
     throw "Inno Setup failed with exit code $LASTEXITCODE"
 }

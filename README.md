@@ -1,13 +1,13 @@
-# 한키 (Hanki) 0.2.1-rc.1 호환성 후보
+# 한키 (Hanki) 0.2.1
 
 한키는 Windows 어디서나 짧은 단축어를 긴 문장으로 바꾸는 로컬 우선 텍스트 확장 앱입니다.
 예를 들어 메모장이나 지원되는 입력창에서 `;문의`를 입력하고 Space를 누르면 다음 문장으로 바뀝니다.
 
 > 안녕하세요. 문의해 주셔서 감사합니다.
 
-0.2.1-rc.1은 PC방·게임·권한 차이 환경의 “앱은 실행되지만 변환되지 않음”을
-분류하기 위한 비공개 호환성 후보입니다. 실제 PC방 재검증 전이므로 정식
-0.2.1로 공개하지 않았고, 공개 다운로드는 계속 0.2.0입니다.
+0.2.1은 Space뿐 아니라 Enter·숫자패드 Enter·Tab 종결자를 실제 처리하고,
+키보드 후크 안정성·복구와 개인정보를 남기지 않는 호환성 진단을 개선한
+2026-08-12 정식 릴리스입니다.
 
 0.2.0부터 선택적 Google 계정 연결을 지원하며 로그인할 때 Google 계정 선택 화면을 엽니다. 로그인하지 않아도 모든 로컬
 단축어 기능을 사용할 수 있으며, 단축어 클라우드 동기화·원격 분석·광고는 없습니다.
@@ -15,11 +15,9 @@
 
 ## 설치
 
-0.2.0 설치본은 GitHub Release `v0.2.0`에서 제공합니다.
+0.2.1 설치본은 GitHub Release `v0.2.1`에서 제공합니다.
 0.1.1 후보는 검증 보존을 위해 `dist/HankiSetup-0.1.1.exe`에 그대로 유지합니다.
-정식 공개 설치본은 [HankiSetup-0.2.0.exe](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.2.0/HankiSetup-0.2.0.exe)입니다.
-0.2.1-rc.1은 로컬 `dist/0.2.1-rc.1`에만 만들며 GitHub Release나 운영
-사이트에 연결하지 않습니다.
+정식 공개 설치본은 [HankiSetup-0.2.1.exe](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.2.1/HankiSetup-0.2.1.exe)입니다.
 
 사용자 계정 범위에 설치되므로 관리자 권한은 필요하지 않습니다.
 바탕 화면 바로가기는 설치 중 선택할 수 있습니다.
@@ -30,9 +28,9 @@ Windows용 코드 서명 인증서가 아직 없으므로 Microsoft Defender Sma
 
 ## Portable 버전
 
-0.2.0 Portable은 GitHub Release `v0.2.0`에서 제공합니다.
+0.2.1 Portable은 GitHub Release `v0.2.1`에서 제공합니다.
 보존된 0.1.1 후보는 `dist/Hanki-0.1.1-win-x64.zip`이며, 현재 공개 Portable 버전은
-[Hanki-0.2.0-win-x64.zip](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.2.0/Hanki-0.2.0-win-x64.zip)입니다.
+[Hanki-0.2.1-win-x64.zip](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.2.1/Hanki-0.2.1-win-x64.zip)입니다.
 
 1. ZIP을 원하는 폴더에 압축 해제합니다.
 2. `Hanki.exe`를 실행합니다.
@@ -42,7 +40,7 @@ Windows용 코드 서명 인증서가 아직 없으므로 Microsoft Defender Sma
 실행 파일 위치를 옮긴 뒤 Windows 자동 실행을 사용하는 경우 설정에서 자동 실행을 껐다가 다시 켜 경로를 갱신하세요.
 
 - [최신 Release 페이지](https://github.com/huiyulidev-gif/HankiWindows/releases/latest)
-- [SHA-256 체크섬](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.2.0/SHA256SUMS-0.2.0.txt)
+- [SHA-256 체크섬](https://github.com/huiyulidev-gif/HankiWindows/releases/download/v0.2.1/SHA256SUMS-0.2.1.txt)
 
 ## 단축어 사용
 
@@ -132,7 +130,7 @@ JSON 백업에는 토큰, 비밀번호, 이메일, 기기 식별정보가 포함
 
 자세한 내용과 앱별 수동 검증 상태는 [알려진 제한](docs/KNOWN_LIMITATIONS.md)과
 [테스트 보고서](docs/TEST_REPORT.md)를 확인하세요.
-0.2.1 후보의 현재 결과는 [호환성 테스트 보고서](docs/COMPATIBILITY_TEST_REPORT.md)에 별도로 기록합니다.
+0.2.1의 자동·로컬 호환성 검증 결과는 [호환성 테스트 보고서](docs/COMPATIBILITY_TEST_REPORT.md)에 기록합니다.
 
 Chrome/Edge용 로컬 입력 페이지는 [브라우저 입력 테스트](docs/BROWSER_INPUT_TEST.html)입니다.
 Chrome, Edge, Discord, KakaoTalk은 최종 검증에서 안전한 전용 제어 수단 또는 확실한 자기 채팅 식별이 없어 실제 입력 테스트를 하지 않았습니다.

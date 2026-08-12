@@ -2,10 +2,10 @@
 param()
 
 $ErrorActionPreference = 'Stop'
-$version = '0.2.1-rc.1'
+$version = '0.2.1'
 $repo = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $dist = Join-Path $repo "dist\$version"
-$zip = Join-Path $dist "Hanki-$version-win-x64-portable.zip"
+$zip = Join-Path $dist "Hanki-$version-win-x64.zip"
 $setup = Join-Path $dist "HankiSetup-$version.exe"
 $sums = Join-Path $dist "SHA256SUMS-$version.txt"
 foreach ($required in @($zip, $setup, $sums)) {
@@ -32,7 +32,7 @@ try {
     }
 
     $env:HANKI_DATA_DIRECTORY = $dataRoot
-    $env:HANKI_INSTANCE_NAMESPACE = 'rc1validation'
+    $env:HANKI_INSTANCE_NAMESPACE = 'release021validation'
     $first = Start-Process -FilePath $exe.FullName `
         -ArgumentList '--diagnostic-exit-after-ms=8000' `
         -WorkingDirectory $exe.DirectoryName `

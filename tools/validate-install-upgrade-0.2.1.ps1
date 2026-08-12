@@ -1,17 +1,28 @@
 [CmdletBinding()]
-param()
+param(
+    [string]$ReleaseSetupPath,
+    [string]$PublicSetupPath
+)
 
 $ErrorActionPreference = 'Stop'
 $repo = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$rcSetup = Join-Path $repo 'dist\0.2.1-rc.1\HankiSetup-0.2.1-rc.1.exe'
-$publicSetup = Join-Path $repo 'dist\0.2.0\HankiSetup-0.2.0.exe'
+$releaseSetup = if ($ReleaseSetupPath) {
+    [System.IO.Path]::GetFullPath($ReleaseSetupPath)
+} else {
+    Join-Path $repo 'dist\0.2.1\HankiSetup-0.2.1.exe'
+}
+$publicSetup = if ($PublicSetupPath) {
+    [System.IO.Path]::GetFullPath($PublicSetupPath)
+} else {
+    Join-Path $repo 'dist\0.2.0\HankiSetup-0.2.0.exe'
+}
 $installDir = Join-Path $env:LOCALAPPDATA 'Programs\Yulbyte\Hanki'
 $installedExe = Join-Path $installDir 'Hanki.exe'
 $dataDir = Join-Path $env:LOCALAPPDATA 'Yulbyte\Hanki'
 $runRoot = Join-Path $env:TEMP ("Hanki-021-install-validation-" + [guid]::NewGuid().ToString('N'))
 $testData = Join-Path $runRoot 'data-copy'
 
-foreach ($required in @($rcSetup, $publicSetup, $installedExe)) {
+foreach ($required in @($releaseSetup, $publicSetup, $installedExe)) {
     if (-not (Test-Path -LiteralPath $required -PathType Leaf)) {
         throw "Missing required file: $required"
     }
@@ -109,17 +120,17 @@ $rcInstallPassed = $false
 $rcUninstallPassed = $false
 $publicRestorePassed = $false
 try {
-    Invoke-Installer $rcSetup
+    Invoke-Installer $releaseSetup
     $rcInfo = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($installedExe)
-    if ($rcInfo.ProductVersion -ne '0.2.1-rc.1' -or $rcInfo.FileVersion -ne '0.2.1.0') {
-        throw "RC install metadata mismatch: $($rcInfo.ProductVersion) / $($rcInfo.FileVersion)"
+    if ($rcInfo.ProductVersion -ne '0.2.1' -or $rcInfo.FileVersion -ne '0.2.1.0') {
+        throw "Release install metadata mismatch: $($rcInfo.ProductVersion) / $($rcInfo.FileVersion)"
     }
-    Invoke-IsolatedInstalledSmoke '0.2.1-rc.1' 'rc1installedsmoke'
+    Invoke-IsolatedInstalledSmoke '0.2.1' 'release021installedsmoke'
     $rcInstallPassed = $true
 
     $uninstaller = Join-Path $installDir 'unins000.exe'
     if (-not (Test-Path -LiteralPath $uninstaller)) {
-        throw 'RC uninstaller was not found.'
+        throw 'Release uninstaller was not found.'
     }
     $uninstall = Start-Process -FilePath $uninstaller -ArgumentList @(
         '/VERYSILENT',
@@ -127,13 +138,13 @@ try {
         '/NORESTART'
     ) -PassThru -Wait
     if ($uninstall.ExitCode -ne 0) {
-        throw "RC uninstall failed with exit code $($uninstall.ExitCode)"
+        throw "Release uninstall failed with exit code $($uninstall.ExitCode)"
     }
     if (Test-Path -LiteralPath $installedExe) {
-        throw 'Installed RC executable remained after uninstall.'
+        throw 'Installed release executable remained after uninstall.'
     }
     if ((Get-DataFingerprint $dataDir) -ne $beforeFingerprint) {
-        throw 'User data changed during RC install/uninstall.'
+        throw 'User data changed during release install/uninstall.'
     }
     $rcUninstallPassed = $true
 
@@ -147,9 +158,9 @@ try {
     [pscustomobject]@{
         UpgradeFrom = $original.ProductVersion
         UpgradeTo = $rcInfo.ProductVersion
-        RCFileVersion = $rcInfo.FileVersion
-        RCInstallAndRun = $rcInstallPassed
-        RCUninstall = $rcUninstallPassed
+        ReleaseFileVersion = $rcInfo.FileVersion
+        ReleaseInstallAndRun = $rcInstallPassed
+        ReleaseUninstall = $rcUninstallPassed
         UserDataPreserved = $true
         PublicVersionRestored = $publicRestorePassed
         FinalInstalledVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($installedExe).ProductVersion
