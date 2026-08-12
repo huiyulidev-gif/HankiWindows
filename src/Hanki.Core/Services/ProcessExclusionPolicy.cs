@@ -1,5 +1,13 @@
 namespace Hanki.Core.Services;
 
+public enum ProcessExclusionReason
+{
+    None,
+    ProcessUnavailable,
+    ProtectedProcess,
+    UserExcluded
+}
+
 public sealed class ProcessExclusionPolicy(IEnumerable<string> excludedProcesses)
 {
     private readonly HashSet<string> _excluded = new(
@@ -11,12 +19,19 @@ public sealed class ProcessExclusionPolicy(IEnumerable<string> excludedProcesses
         StringComparer.OrdinalIgnoreCase);
 
     public bool IsExcluded(string? processName)
+        => Evaluate(processName) != ProcessExclusionReason.None;
+
+    public ProcessExclusionReason Evaluate(string? processName)
     {
         if (string.IsNullOrWhiteSpace(processName))
-            return true;
+            return ProcessExclusionReason.ProcessUnavailable;
 
         var normalized = Normalize(processName);
-        return ProtectedProcesses.Contains(normalized) || _excluded.Contains(normalized);
+        if (ProtectedProcesses.Contains(normalized))
+            return ProcessExclusionReason.ProtectedProcess;
+        return _excluded.Contains(normalized)
+            ? ProcessExclusionReason.UserExcluded
+            : ProcessExclusionReason.None;
     }
 
     public static string Normalize(string processName)

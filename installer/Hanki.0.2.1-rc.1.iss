@@ -1,10 +1,10 @@
 #define MyAppName "한키"
-#define MyAppVersion "0.2.1"
+#define MyAppVersion "0.2.1-rc.1"
 #define MyAppBinaryVersion "0.2.1.0"
 #define MyAppPublisher "Yulbyte"
 #define MyAppExeName "Hanki.exe"
-#define ReleaseOutputRoot "..\dist\0.2.1"
-#define ReleasePayload "..\dist\0.2.1\Hanki-0.2.1-win-x64"
+#define RCOutputRoot "..\dist\0.2.1-rc.1"
+#define RCPayload "..\dist\0.2.1-rc.1\Hanki-0.2.1-rc.1-win-x64"
 
 [Setup]
 AppId={{D17F11A7-3AE2-4B85-A6B0-5E4C0A1F7D0E}
@@ -19,7 +19,7 @@ DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
-OutputDir={#ReleaseOutputRoot}
+OutputDir={#RCOutputRoot}
 OutputBaseFilename=HankiSetup-{#MyAppVersion}
 Compression=lzma2/max
 SolidCompression=yes
@@ -33,14 +33,14 @@ WizardImageFile=..\assets\branding\hanki-installer-wizard.png
 WizardSmallImageFile=..\assets\branding\hanki-installer-small.png
 VersionInfoVersion={#MyAppBinaryVersion}
 VersionInfoCompany={#MyAppPublisher}
-VersionInfoDescription={#MyAppName} Windows {#MyAppVersion} 설치 프로그램
+VersionInfoDescription={#MyAppName} Windows {#MyAppVersion} 호환성 출시 후보 설치 프로그램
 VersionInfoProductName={#MyAppName}
 
 [Tasks]
 Name: "desktopicon"; Description: "바탕 화면 바로가기 만들기"; GroupDescription: "추가 바로가기"; Flags: unchecked
 
 [Files]
-Source: "{#ReleasePayload}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#RCPayload}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppExeName}"

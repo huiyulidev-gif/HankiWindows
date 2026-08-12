@@ -1,0 +1,92 @@
+<Window x:Class="Hanki.CompatibilityHarness.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Hanki Compatibility Harness"
+        Width="820"
+        Height="760"
+        MinWidth="620"
+        MinHeight="520"
+        WindowStartupLocation="CenterScreen">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24" MaxWidth="740">
+            <TextBlock Text="한키 0.2.1 호환성 하네스" FontSize="24" FontWeight="Bold"
+                       Foreground="#4E369E"/>
+            <TextBlock Margin="0,6,0,18" TextWrapping="Wrap"
+                       Text="일반 권한과 관리자 권한에서 같은 입력 컨트롤을 비교합니다. 실제 단축어 또는 호환성 진단의 임시 ;hankitest 단축어를 사용하세요."/>
+
+            <Border Background="White" BorderBrush="#D9D0EC" BorderThickness="1"
+                    CornerRadius="10" Padding="16" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="1. 일반 한 줄 입력창" FontWeight="Bold"/>
+                    <TextBox x:Name="StandardInput"
+                             AutomationProperties.Name="호환성 하네스 일반 입력창"/>
+                    <TextBlock Text="Space·Enter·Tab 및 OEM 세미콜론(;)을 확인하세요."
+                               Foreground="#665E73"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="White" BorderBrush="#D9D0EC" BorderThickness="1"
+                    CornerRadius="10" Padding="16" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="2. 여러 줄 입력창" FontWeight="Bold"/>
+                    <TextBox x:Name="MultilineInput"
+                             AcceptsReturn="True"
+                             AcceptsTab="True"
+                             Height="120"
+                             VerticalContentAlignment="Top"
+                             VerticalScrollBarVisibility="Auto"
+                             AutomationProperties.Name="호환성 하네스 여러 줄 입력창"/>
+                    <TextBlock Text="Enter·숫자패드 Enter·Tab을 각각 확인하세요. AcceptsTab이 켜져 있어 Tab이 입력창 안에 남습니다."
+                               Foreground="#665E73" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#FFF4F6" BorderBrush="#E3A7B4" BorderThickness="1"
+                    CornerRadius="10" Padding="16" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="3. 비밀번호 입력창 (변환 금지)" FontWeight="Bold"/>
+                    <PasswordBox x:Name="PasswordInput"
+                                 Padding="9"
+                                 Margin="0,5,0,8"
+                                 AutomationProperties.Name="호환성 하네스 비밀번호 입력창"/>
+                    <TextBlock Text="개인정보 보호를 위해 여기서는 감지 후 변환이 차단되어야 합니다."
+                               Foreground="#8D3347"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#F2F2F2" BorderBrush="#C8C8C8" BorderThickness="1"
+                    CornerRadius="10" Padding="16" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="4. 읽기 전용 입력창 (변환 금지)" FontWeight="Bold"/>
+                    <TextBox IsReadOnly="True"
+                             Text="읽기 전용: 한키가 내용을 바꾸면 안 됩니다."
+                             AutomationProperties.Name="호환성 하네스 읽기 전용 입력창"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="White" BorderBrush="#D9D0EC" BorderThickness="1"
+                    CornerRadius="10" Padding="16" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="5. 빠른 입력·Backspace 수정" FontWeight="Bold"/>
+                    <TextBox x:Name="RapidInput"
+                             AutomationProperties.Name="호환성 하네스 빠른 입력창"/>
+                    <TextBlock TextWrapping="Wrap" Foreground="#665E73"
+                               Text="단축어를 빠르게 입력하거나 중간에 Backspace로 수정한 뒤 종결자를 누르세요. Ctrl·Alt·Windows 키 조합에서는 변환이 시작되지 않아야 합니다."/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#EEE9FA" CornerRadius="10" Padding="16" Margin="0,0,0,18">
+                <StackPanel>
+                    <TextBlock Text="IME 확인 순서" FontWeight="Bold" Foreground="#4E369E"/>
+                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap"
+                               Text="① 한/영 키로 영문 상태에서 ;hankitest를 확인합니다. ② 한글 IME를 켜고 조합 중인 글자를 만든 뒤 한키가 조합 문자열을 훼손하지 않는지 확인합니다. ③ 조합을 끝낸 후 Space·Enter·Tab을 다시 확인합니다. ④ Caps Lock·Shift와 숫자패드 Enter도 별도로 확인합니다."/>
+                </StackPanel>
+            </Border>
+
+            <Button Content="모든 일반 입력창 지우기"
+                    HorizontalAlignment="Left"
+                    Padding="14,8"
+                    Click="ClearButton_Click"/>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

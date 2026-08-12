@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using Hanki.App.ViewModels;
@@ -132,4 +134,98 @@ public partial class MainWindow : Window
     }
 
     private void OpenDataFolderButton_Click(object sender, RoutedEventArgs e) => ViewModel.OpenDataFolder();
+
+    private void RefreshDiagnosticsButton_Click(object sender, RoutedEventArgs e) =>
+        ViewModel.RefreshCompatibilityDiagnostics();
+
+    private async void HookSelfTestButton_Click(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.RunHookSelfTestAsync();
+    }
+
+    private async void RestartHookButton_Click(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.RestartHookAsync();
+    }
+
+    private void BeginInternalTestButton_Click(object sender, RoutedEventArgs e)
+    {
+        CompatibilityTestInput.Clear();
+        ViewModel.BeginInternalExpansionTest();
+        CompatibilityTestInput.Focus();
+    }
+
+    private async void ExportDiagnosticsButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new SaveFileDialog
+        {
+            Title = "한키 호환성 진단 ZIP 저장",
+            Filter = "ZIP 파일 (*.zip)|*.zip",
+            FileName = $"Hanki-diagnostics-{DateTime.Now:yyyyMMdd-HHmmss}.zip",
+            AddExtension = true
+        };
+        if (dialog.ShowDialog(this) != true)
+            return;
+
+        try
+        {
+            await ViewModel.ExportCompatibilityDiagnosticsAsync(dialog.FileName);
+            MessageBox.Show(
+                "키 입력·단축어·변환문·클립보드·창 제목을 제외한 진단 ZIP을 저장했습니다.",
+                "한키",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+        catch
+        {
+            MessageBox.Show(
+                "진단 ZIP을 저장하지 못했습니다. 쓰기 권한과 저장 위치를 확인해 주세요.",
+                "한키",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+        }
+    }
+
+    private async void RestartElevatedButton_Click(object sender, RoutedEventArgs e)
+    {
+        var result = MessageBox.Show(
+            "현재 설정을 저장한 뒤 이번 세션만 관리자 권한으로 한키를 다시 시작합니다.\n\n" +
+            "관리자 실행은 게임 보안 모듈이나 PC방 보안 정책의 제한 해제를 보장하지 않습니다. 계속할까요?",
+            "한키 관리자 재시작",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            await ViewModel.SaveSettingsAsync();
+            var executable = Environment.ProcessPath
+                ?? throw new InvalidOperationException("현재 실행 파일 경로를 확인할 수 없습니다.");
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = executable,
+                WorkingDirectory = AppContext.BaseDirectory,
+                UseShellExecute = true,
+                Verb = "runas"
+            });
+            System.Windows.Application.Current.Shutdown();
+        }
+        catch (Win32Exception exception) when (exception.NativeErrorCode == 1223)
+        {
+            MessageBox.Show(
+                "관리자 권한 요청을 취소했습니다. 한키는 현재 권한으로 계속 실행됩니다.",
+                "한키",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+        catch
+        {
+            MessageBox.Show(
+                "관리자 권한으로 다시 시작하지 못했습니다. 한키는 현재 권한으로 계속 실행됩니다.",
+                "한키",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+        }
+    }
 }

@@ -42,14 +42,24 @@ public sealed class SqliteRepositoryTests
         var settings = new AppSettings
         {
             IsEnabled = false,
+            IsPaused = true,
             StartWithWindows = true,
-            ExcludedProcesses = ["example.exe"]
+            EnterExpansionEnabled = true,
+            TabExpansionEnabled = true,
+            ClipboardCompatibilityMode = true,
+            ExcludedProcesses = ["example.exe"],
+            ExcludedSites = ["example.com"]
         };
         await fixture.Settings.SaveAsync(settings);
         var loaded = await fixture.Settings.GetAsync();
         Assert.IsFalse(loaded.IsEnabled);
+        Assert.IsTrue(loaded.IsPaused);
         Assert.IsTrue(loaded.StartWithWindows);
+        Assert.IsTrue(loaded.EnterExpansionEnabled);
+        Assert.IsTrue(loaded.TabExpansionEnabled);
+        Assert.IsTrue(loaded.ClipboardCompatibilityMode);
         CollectionAssert.AreEqual(new[] { "example.exe" }, loaded.ExcludedProcesses);
+        CollectionAssert.AreEqual(new[] { "example.com" }, loaded.ExcludedSites);
     }
 
     internal sealed class DatabaseFixture : IAsyncDisposable

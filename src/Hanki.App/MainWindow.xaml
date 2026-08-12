@@ -35,8 +35,18 @@
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding IsEnabled, StringFormat=변환 상태: {0}}"
-                               Foreground="#E8E1FA" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                    <TextBlock Foreground="#E8E1FA" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="변환 상태: 꺼짐"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEnabled}" Value="True">
+                                        <Setter Property="Text" Value="변환 상태: 켜짐"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                     <CheckBox IsChecked="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               ToolTip="전체 단축어 변환 켜기/끄기"
                               Width="22" Height="22"/>
@@ -168,14 +178,24 @@
                                           IsChecked="{Binding Settings.StartWithWindows}"/>
                                 <CheckBox Content="창을 닫아도 트레이에서 계속 실행"
                                           IsChecked="{Binding Settings.MinimizeToTray}" Margin="0,12,0,0"/>
+                                <CheckBox Content="단축어 변환 일시 정지"
+                                          IsChecked="{Binding Settings.IsPaused}" Margin="0,12,0,0"
+                                          ToolTip="후크는 유지하고 변환만 잠시 멈춥니다."/>
                                 <CheckBox Content="Space로 단축어 변환"
                                           IsChecked="{Binding Settings.SpaceExpansionEnabled}" Margin="0,12,0,0"/>
-                                <CheckBox Content="Enter 변환 (실험적 · 이 버전에서는 동작하지 않음)"
+                                <CheckBox Content="Enter·숫자패드 Enter로 단축어 변환"
                                           IsChecked="{Binding Settings.EnterExpansionEnabled}"
-                                          IsEnabled="False" Margin="0,12,0,0"/>
-                                <CheckBox Content="Tab 변환 (실험적 · 이 버전에서는 동작하지 않음)"
+                                          Margin="0,12,0,0"/>
+                                <CheckBox Content="Tab으로 단축어 변환"
                                           IsChecked="{Binding Settings.TabExpansionEnabled}"
-                                          IsEnabled="False" Margin="0,12,0,0"/>
+                                          Margin="0,12,0,0"/>
+                                <CheckBox Content="호환성 붙여넣기 모드 (선택 사항 · 기본 OFF)"
+                                          IsChecked="{Binding Settings.ClipboardCompatibilityMode}"
+                                          Margin="0,12,0,0"
+                                          ToolTip="직접 Unicode 입력이 제한된 일반 앱에서만 사용하세요. 비밀번호·제외 대상에서는 동작하지 않습니다."/>
+                                <TextBlock Margin="24,6,0,0" Foreground="{StaticResource TextSecondary}"
+                                           TextWrapping="Wrap"
+                                           Text="붙여넣기 모드는 변환문을 잠시 클립보드에 넣은 뒤 복원합니다. 다른 앱이 그 사이 클립보드를 바꾸면 사용자 변경을 덮어쓰지 않습니다. 게임·보안 정책을 우회하지 않습니다."/>
                             </StackPanel>
                         </Border>
 
@@ -185,6 +205,15 @@
                                    Foreground="{StaticResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,8"/>
                         <TextBox Text="{Binding ExcludedProcessesText, UpdateSourceTrigger=LostFocus}"
                                  AcceptsReturn="True" Height="120"
+                                 VerticalContentAlignment="Top"
+                                 VerticalScrollBarVisibility="Auto"/>
+
+                        <TextBlock Text="제외 사이트" FontSize="20" FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimary}" Margin="0,24,0,4"/>
+                        <TextBlock Text="도메인을 한 줄에 하나씩 입력하세요. 브라우저 주소 전체는 저장하거나 진단 보고서에 넣지 않습니다."
+                                   Foreground="{StaticResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                        <TextBox Text="{Binding ExcludedSitesText, UpdateSourceTrigger=LostFocus}"
+                                 AcceptsReturn="True" Height="96"
                                  VerticalContentAlignment="Top"
                                  VerticalScrollBarVisibility="Auto"/>
 
@@ -207,11 +236,183 @@
                             </StackPanel>
                         </Border>
 
-                        <TextBlock Text="한키 0.2.0 · Yulbyte" FontWeight="SemiBold" Margin="0,22,0,0"/>
+                        <TextBlock Text="한키 0.2.1 · Yulbyte" FontWeight="SemiBold" Margin="0,22,0,0"/>
                         <TextBlock Text="지원: huiyuli.dev@gmail.com"
                                    Foreground="{StaticResource TextSecondary}" Margin="0,4,0,0"/>
                         <Button Content="설정 저장" Click="SaveSettingsButton_Click"
                                 HorizontalAlignment="Left" Margin="0,20,0,24"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="호환성 진단">
+                <ScrollViewer Margin="0,12,0,0" VerticalScrollBarVisibility="Auto">
+                    <StackPanel MaxWidth="860" HorizontalAlignment="Left">
+                        <TextBlock Text="호환성 진단" FontSize="22" FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimary}"/>
+                        <TextBlock Margin="0,6,0,14" TextWrapping="Wrap"
+                                   Foreground="{StaticResource TextSecondary}"
+                                   Text="이 화면은 ‘키 감지 실패’, ‘입력창 정보 접근 실패’, ‘권한 차이’, ‘문구 주입 실패’를 구분합니다. 보안 프로그램 차단 여부를 임의로 확정하거나 우회하지 않습니다."/>
+
+                        <WrapPanel Margin="0,0,0,12">
+                            <Button Content="상태 새로고침" Click="RefreshDiagnosticsButton_Click" Margin="0,0,8,8"/>
+                            <Button Content="키 입력 감지 자가 테스트" Click="HookSelfTestButton_Click"
+                                    Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                            <Button Content="후크 다시 등록" Click="RestartHookButton_Click"
+                                    Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                            <Button Content="진단 ZIP 내보내기" Click="ExportDiagnosticsButton_Click"
+                                    Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                        </WrapPanel>
+                        <TextBlock Text="{Binding HookSelfTestMessage}" TextWrapping="Wrap"
+                                   Foreground="{StaticResource Purple700}" FontWeight="SemiBold" Margin="0,0,0,14"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <Border Background="White" BorderBrush="{StaticResource BorderBrush}"
+                                        BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,0,12">
+                                    <StackPanel>
+                                        <TextBlock Text="한키 상태" FontWeight="Bold" FontSize="16"/>
+                                        <TextBlock Text="{Binding DiagnosticAppStatus}" Margin="0,6,0,0"
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Background="White" BorderBrush="{StaticResource BorderBrush}"
+                                        BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,0,12">
+                                    <StackPanel>
+                                        <TextBlock Text="키보드 후크" FontWeight="Bold" FontSize="16"/>
+                                        <TextBlock Text="{Binding DiagnosticHookStatus}" Margin="0,6,0,0"
+                                                   TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding DiagnosticHookTimes}" Margin="0,5,0,0"
+                                                   Foreground="{StaticResource TextSecondary}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <Border Background="White" BorderBrush="{StaticResource BorderBrush}"
+                                        BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,0,12">
+                                    <StackPanel>
+                                        <TextBlock Text="현재 입력 대상" FontWeight="Bold" FontSize="16"/>
+                                        <TextBlock Text="{Binding DiagnosticTargetStatus}" Margin="0,6,0,0"
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Background="White" BorderBrush="{StaticResource BorderBrush}"
+                                        BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,0,12">
+                                    <StackPanel>
+                                        <TextBlock Text="입력 환경" FontWeight="Bold" FontSize="16"/>
+                                        <TextBlock Text="{Binding DiagnosticEnvironmentStatus}" Margin="0,6,0,0"
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Background="#FFF7E8" BorderBrush="#E8C782" BorderThickness="1"
+                                CornerRadius="12" Padding="16" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="마지막 처리 결과" FontWeight="Bold" FontSize="16"/>
+                                <TextBlock Text="{Binding DiagnosticProcessingStatus}" Margin="0,6,0,0"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding DiagnosticGuidance}" Margin="0,8,0,0"
+                                           TextWrapping="Wrap" Foreground="#704B00"/>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="내부 변환 테스트" FontSize="20" FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimary}" Margin="0,8,0,8"/>
+                        <Border Background="White" BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1" CornerRadius="12" Padding="16">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="종결자" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <ComboBox Width="150"
+                                              ItemsSource="{Binding DiagnosticDelimiterOptions}"
+                                              SelectedItem="{Binding DiagnosticTestDelimiter}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Converter={StaticResource CompatibilityEnumDisplayConverter}}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <Button Content="임시 테스트 준비" Click="BeginInternalTestButton_Click"
+                                            Margin="10,0,0,0"/>
+                                </StackPanel>
+                                <TextBlock Margin="0,10,0,8" TextWrapping="Wrap"
+                                           Text="준비 버튼을 누른 뒤 아래 칸에 ;hankitest 를 입력하고 선택한 종결자 키를 누르세요. 실제 단축어 목록에는 저장되지 않습니다."/>
+                                <TextBox x:Name="CompatibilityTestInput"
+                                         MinHeight="44"
+                                         AutomationProperties.Name="한키 호환성 내부 테스트 입력창"/>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="권한 차이" FontSize="20" FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimary}" Margin="0,24,0,8"/>
+                        <Border Background="White" BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1" CornerRadius="12" Padding="16">
+                            <StackPanel>
+                                <TextBlock TextWrapping="Wrap"
+                                           Text="대상이 더 높은 권한이면 Windows UIPI 정책 때문에 입력이 제한될 수 있습니다. 아래 기능은 사용자가 직접 누른 현재 세션에서만 UAC를 요청하며, 기본 관리자 실행을 설정하지 않습니다."/>
+                                <Button Content="이번 세션만 관리자 권한으로 한키 다시 시작"
+                                        Click="RestartElevatedButton_Click"
+                                        Style="{StaticResource SecondaryButton}"
+                                        HorizontalAlignment="Left" Margin="0,12,0,0"/>
+                                <TextBlock Margin="0,8,0,0" Foreground="{StaticResource TextSecondary}"
+                                           TextWrapping="Wrap"
+                                           Text="관리자 실행으로도 게임 보안 모듈이나 PC방 보안 정책의 입력 제한이 해제된다고 보장할 수 없습니다."/>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="외부 프로그램 수동 확인" FontSize="20" FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimary}" Margin="0,24,0,8"/>
+                        <ItemsControl ItemsSource="{Binding ManualCompatibilityChecks}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="White" BorderBrush="{StaticResource BorderBrush}"
+                                            BorderThickness="1" CornerRadius="9" Padding="12" Margin="0,0,0,6">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="250"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                                            <ComboBox Grid.Column="1"
+                                                      ItemsSource="{Binding DataContext.ManualCheckStatusOptions, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                      SelectedItem="{Binding Status, Mode=TwoWay}">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding Converter={StaticResource CompatibilityEnumDisplayConverter}}"/>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock Text="최근 진단 이벤트" FontSize="20" FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimary}" Margin="0,24,0,8"/>
+                        <Border Background="#201B2E" CornerRadius="12" Padding="14">
+                            <ItemsControl ItemsSource="{Binding RecentDiagnosticEvents}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" Foreground="#EDE8FA"
+                                                   FontFamily="Consolas" FontSize="12"
+                                                   TextWrapping="Wrap" Margin="0,2"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
+
+                        <Border Background="#EEE9FA" CornerRadius="12" Padding="16" Margin="0,16,0,24">
+                            <TextBlock TextWrapping="Wrap"
+                                       Text="진단 보고서에는 UTC 시각, 앱·Windows 버전, 실행 파일명(경로 제외), 무결성·후크·IME·레이아웃 상태, 종결자 종류, 단계별 요청/성공 수와 열거형 사유만 포함됩니다. 키 입력, 단축어·변환문, 클립보드, 창 제목, 사용자 이름과 전체 경로는 포함하지 않습니다."/>
+                        </Border>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
